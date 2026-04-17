@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Notes</title>
+<link rel="manifest" href="manifest.json"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="Notes"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<meta name="theme-color" content="#fce4ec"/>
+<style>
+  /* ============================================================
+     BASE & RESET
+  ============================================================ */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    background: #f0f0f0;
+    color: #333;
+    transition: background 1s ease, color 1s ease;
+  }
+
+  /* ============================================================
+     LOGIN SCREEN — neutral/bland
+  ============================================================ */
+  #login-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+
+  #login-screen h1 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 2rem;
+    letter-spacing: 0.05em;
+  }
+
+  .login-box {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .login-box label {
+    font-size: 0.8rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .login-box input {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .login-box input:focus { border-color: #aaa; }
+
+  .login-box button {
+    padding: 0.65rem;
+    background: #555;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .login-box button:hover { background: #444; }
+
+  #login-error {
+    font-size: 0.8rem;
+    color: #c0392b;
+    display: none;
+    text-align: center;
+  }
+
+  /* ============================================================
+     MAIN APP — romantic, unlocked state
+  ============================================================ */
+  #app-screen {
+    display: none;
+    padding: 1.5rem 1rem 4rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  /* Romantic background on body when unlocked */
+  body.unlocked {
+    background: linear-gradient(135deg, #fff0f3 0%, #fce4ec 50%, #fdf3f0 100%);
+    color: #3d2030;
+  }
+
+  .app-header {
+    text-align: center;
+    padding: 2rem 0 1.5rem;
+  }
+
+  .app-header h1 {
+    font-size: 1.9rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    color: #b5475a;
+  }
+
+  .app-header p {
+    font-size: 0.85rem;
+    color: #c47a8a;
+    margin-top: 0.4rem;
+  }
+
+  /* Section headings */
+  .section-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #b5475a;
+    margin: 2rem 0 0.75rem 0.25rem;
+    border-bottom: 1px solid #f2c0cb;
+    padding-bottom: 0.4rem;
+  }
+
+  /* ============================================================
+     TILE GRID
+  ============================================================ */
+  .tile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.85rem;
+  }
+
+  .tile {
+    background: #fff;
+    border: 1px solid #f2c0cb;
+    border-radius: 14px;
+    padding: 1.1rem 0.8rem;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    user-select: none;
+  }
+
+  .tile:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(181,71,90,0.12); }
+  .tile:active { transform: scale(0.97); }
+
+  .tile.locked {
+    background: #fafafa;
+    border-color: #e0e0e0;
+    cursor: default;
+    opacity: 0.75;
+  }
+
+  .tile.locked:hover { transform: none; box-shadow: none; }
+
+  .tile-icon { font-size: 1.6rem; }
+  .tile-title { font-size: 0.82rem; font-weight: 500; color: #b5475a; line-height: 1.3; }
+  .tile.locked .tile-title { color: #aaa; }
+  .tile-sub { font-size: 0.7rem; color: #c47a8a; }
+  .tile.locked .tile-sub { color: #ccc; }
+
+  /* ============================================================
+     MODAL
+  ============================================================ */
+  #modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(61,32,48,0.45);
+    backdrop-filter: blur(3px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  #modal-overlay.open { display: flex; }
+
+  .modal-box {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2rem 1.8rem;
+    max-width: 420px;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(181,71,90,0.18);
+    animation: popIn 0.25s ease;
+  }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem; right: 1.1rem;
+    background: none; border: none;
+    font-size: 1.4rem; color: #c47a8a;
+    cursor: pointer; line-height: 1;
+  }
+
+  .modal-icon { font-size: 2rem; text-align: center; margin-bottom: 0.6rem; }
+
+  .modal-title {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: #b5475a;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .modal-body {
+    font-size: 0.95rem;
+    color: #5a3040;
+    line-height: 1.7;
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* ============================================================
+     DUAL CLOCK
+  ============================================================ */
+  .clock-bar {
+    margin-top: 2.5rem;
+    background: #fff;
+    border: 1px solid #f2c0cb;
+    border-radius: 16px;
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .clock-item { text-align: center; }
+
+  .clock-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #c47a8a;
+    margin-bottom: 0.25rem;
+  }
+
+  .clock-time {
+    font-size: 1.25rem;
+    font-weight: 300;
+    color: #b5475a;
+    letter-spacing: 0.05em;
+  }
+
+  .clock-date { font-size: 0.72rem; color: #c47a8a; margin-top: 0.15rem; }
+  .clock-divider { width: 1px; height: 40px; background: #f2c0cb; }
+
+  /* ============================================================
+     RESPONSIVE
+  ============================================================ */
+  @media (max-width: 400px) {
+    .tile-grid { grid-template-columns: repeat(2, 1fr); }
+    .clock-divider { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     LOGIN SCREEN
+============================================================ -->
+<div id="login-screen">
+  <h1>Notes</h1>
+  <div class="login-box">
+    <label for="pw-input">Password</label>
+    <input type="password" id="pw-input" placeholder="Enter password" autocomplete="off"/>
+    <button onclick="attemptLogin()">Unlock</button>
+    <div id="login-error">Incorrect password. Try again.</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MAIN APP SCREEN
+============================================================ -->
+<div id="app-screen">
+  <div class="app-header">
+    <h1>for asha ♡</h1>
+    <p>open when you need it</p>
+  </div>
+
+  <!-- DATE-BASED TILES -->
+  <div class="section-label">📅 Special Dates</div>
+  <div class="tile-grid" id="date-tiles"></div>
+
+  <!-- SITUATION-BASED TILES -->
+  <div class="section-label">💌 Open When…</div>
+  <div class="tile-grid" id="situation-tiles"></div>
+
+  <!-- DUAL CLOCK -->
+  <div class="clock-bar">
+    <div class="clock-item">
+      <div class="clock-label">🇵🇭 Philippines</div>
+      <div class="clock-time" id="clock-ph">--:--:--</div>
+      <div class="clock-date" id="date-ph">---</div>
+    </div>
+    <div class="clock-divider"></div>
+    <div class="clock-item">
+      <div class="clock-label">🇨🇦 Canada</div>
+      <div class="clock-time" id="clock-ca">--:--:--</div>
+      <div class="clock-date" id="date-ca">---</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL
+============================================================ -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModalDirect()">×</button>
+    <div class="modal-icon" id="modal-icon"></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  CONFIG — EDIT THESE
+// ============================================================
+
+// CHANGE PASSWORD HERE
+const PASSWORD = "password123";
+
+// BIRTHDAY DATE — format: month (1-12), day
+const BIRTHDAY = { month: 6, day: 15 }; // e.g. June 15 — replace with Ash's birthday
+
+// ============================================================
+//  DATE-BASED TILES
+//  unlock: { month, day } — unlocks ON that date or after
+//  To add a tile, copy a block and add it to the array.
+// ============================================================
+const dateTiles = [
+  {
+    id: "apr18",
+    icon: "🌷",
+    title: "April 18th",
+    sub: "a special day",
+    unlock: { month: 4, day: 18 },
+    message: "Placeholder message content. Replace this with your April 18th note for Ash."
+  },
+  {
+    id: "apr19",
+    icon: "💕",
+    title: "April 19th",
+    sub: "a special day",
+    unlock: { month: 4, day: 19 },
+    message: "Placeholder message content. Replace this with your April 19th note for Ash."
+  },
+  {
+    id: "may1",
+    icon: "🌸",
+    title: "May 1st",
+    sub: "first of the month",
+    unlock: { month: 5, day: 1 },
+    // REPLACE MESSAGE BELOW
+    message: "Placeholder message content. Replace this with your May 1st note for Ash."
+  },
+  {
+    id: "jun1",
+    icon: "☀️",
+    title: "June 1st",
+    sub: "one month in",
+    unlock: { month: 6, day: 1 },
+    message: "Placeholder message content. Replace this with your June 1st note."
+  },
+  {
+    id: "birthday",
+    icon: "🎂",
+    title: "Your Birthday",
+    sub: "your special day",
+    unlock: BIRTHDAY,
+    message: "Placeholder message content. Replace this with your birthday note for Ash."
+  },
+  {
+    id: "jul1",
+    icon: "🌻",
+    title: "July 1st",
+    sub: "two months in",
+    unlock: { month: 7, day: 1 },
+    message: "Placeholder message content. Replace this with your July 1st note."
+  },
+  {
+    id: "aug1",
+    icon: "🌙",
+    title: "August 1st",
+    sub: "almost there",
+    unlock: { month: 8, day: 1 },
+    message: "Placeholder message content. Replace this with your August 1st note."
+  }
+];
+
+// ============================================================
+//  SITUATION-BASED TILES — always unlocked
+//  To add more, copy a block and add to the array.
+// ============================================================
+const situationTiles = [
+  {
+    id: "s1",
+    icon: "🌊",
+    title: "When distance feels huge",
+    message: "Placeholder message content. Replace with your note for when distance feels hard."
+  },
+  {
+    id: "s2",
+    icon: "💭",
+    title: "When you miss me",
+    message: "Placeholder message content. Replace with your note for when Ash misses you."
+  },
+  {
+    id: "s3",
+    icon: "✨",
+    title: "Halfway through summer",
+    message: "Placeholder message content. Replace with your halfway note."
+  },
+  {
+    id: "s4",
+    icon: "😢",
+    title: "When you're sad",
+    message: "Placeholder message content. Replace with your note for sad days."
+  },
+  {
+    id: "s5",
+    icon: "😤",
+    title: "When you're frustrated",
+    message: "Placeholder message content. Replace with your note for frustrating days."
+  },
+  {
+    id: "s6",
+    icon: "🎉",
+    title: "When something good happens",
+    message: "Placeholder message content. Replace with your note for celebrating wins."
+  },
+  {
+    id: "s7",
+    icon: "🌙",
+    title: "When you can't sleep",
+    message: "Placeholder message content. Replace with your note for restless nights."
+  },
+  {
+    id: "s8",
+    icon: "🫂",
+    title: "When you need a hug",
+    message: "Placeholder message content. Replace with your note for when Ash needs comfort."
+  },
+  {
+    id: "s9",
+    icon: "💪",
+    title: "When you need motivation",
+    message: "Placeholder message content. Replace with your hype-up note."
+  }
+];
+
+// ============================================================
+//  LOGIN LOGIC
+// ============================================================
+function attemptLogin() {
+  const input = document.getElementById("pw-input").value;
+  if (input === PASSWORD) {
+    document.getElementById("login-screen").style.display = "none";
+    document.getElementById("app-screen").style.display = "block";
+    document.body.classList.add("unlocked");
+    buildTiles();
+    startClocks();
+  } else {
+    document.getElementById("login-error").style.display = "block";
+    document.getElementById("pw-input").value = "";
+  }
+}
+
+// Allow Enter key on password field
+document.getElementById("pw-input").addEventListener("keydown", e => {
+  if (e.key === "Enter") attemptLogin();
+});
+
+// ============================================================
+//  DATE UNLOCK LOGIC
+// ============================================================
+function isUnlocked(unlock) {
+  if (!unlock) return true;
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const day = now.getDate();
+  if (month > unlock.month) return true;
+  if (month === unlock.month && day >= unlock.day) return true;
+  return false;
+}
+
+// ============================================================
+//  BUILD TILES
+// ============================================================
+function buildTiles() {
+  const dateGrid = document.getElementById("date-tiles");
+  dateTiles.forEach(tile => {
+    const unlocked = isUnlocked(tile.unlock);
+    const el = document.createElement("div");
+    el.className = "tile" + (unlocked ? "" : " locked");
+    el.innerHTML = `
+      <div class="tile-icon">${unlocked ? tile.icon : "🔒"}</div>
+      <div class="tile-title">${tile.title}</div>
+      ${tile.sub ? `<div class="tile-sub">${unlocked ? tile.sub : "Locked"}</div>` : ""}
+    `;
+    if (unlocked) el.onclick = () => openModal(tile);
+    dateGrid.appendChild(el);
+  });
+
+  const sitGrid = document.getElementById("situation-tiles");
+  situationTiles.forEach(tile => {
+    const el = document.createElement("div");
+    el.className = "tile";
+    el.innerHTML = `
+      <div class="tile-icon">${tile.icon}</div>
+      <div class="tile-title">${tile.title}</div>
+    `;
+    el.onclick = () => openModal(tile);
+    sitGrid.appendChild(el);
+  });
+}
+
+// ============================================================
+//  MODAL
+// ============================================================
+function openModal(tile) {
+  document.getElementById("modal-icon").textContent = tile.icon || "";
+  document.getElementById("modal-title").textContent = tile.title;
+  document.getElementById("modal-body").textContent = tile.message;
+  document.getElementById("modal-overlay").classList.add("open");
+}
+
+function closeModal(e) {
+  if (e.target.id === "modal-overlay") closeModalDirect();
+}
+
+function closeModalDirect() {
+  document.getElementById("modal-overlay").classList.remove("open");
+}
+
+// ============================================================
+//  DUAL CLOCK
+// ============================================================
+function startClocks() {
+  function update() {
+    const fmt = (tz) => {
+      const now = new Date();
+      const time = now.toLocaleTimeString("en-US", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit" });
+      const date = now.toLocaleDateString("en-US", { timeZone: tz, weekday: "short", month: "short", day: "numeric" });
+      return { time, date };
+    };
+    const ph = fmt("Asia/Manila");
+    const ca = fmt("America/Toronto");
+    document.getElementById("clock-ph").textContent = ph.time;
+    document.getElementById("date-ph").textContent = ph.date;
+    document.getElementById("clock-ca").textContent = ca.time;
+    document.getElementById("date-ca").textContent = ca.date;
+  }
+  update();
+  setInterval(update, 1000);
+}
+</script>
+</body>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js');
+    });
+  }
+</script>
+</html>
