@@ -156,18 +156,6 @@
   .tile-sub { font-size: 0.7rem; color: #c47a8a; }
   .tile.locked .tile-sub { color: #ccc; }
 
-  /* VIEW COUNT BADGE */
-  .view-badge {
-    font-size: 0.65rem;
-    color: #d4a0aa;
-    margin-top: 0.2rem;
-    letter-spacing: 0.03em;
-  }
-
-  .view-badge.seen {
-    color: #b5475a;
-    font-weight: 500;
-  }
 
   /* MODAL */
   #modal-overlay {
@@ -235,12 +223,7 @@
   .modal-body::-webkit-scrollbar-track { background: transparent; }
   .modal-body::-webkit-scrollbar-thumb { background: #f2c0cb; border-radius: 4px; }
 
-  .modal-views {
-    font-size: 0.7rem;
-    color: #d4a0aa;
-    text-align: center;
-    margin-top: 1.2rem;
-  }
+  .modal-views { display: none; }
 
   /* CLOCK */
   .clock-bar {
@@ -336,7 +319,7 @@ const dateTiles = [
     id: "apr26",
     icon: "🌷",
     title: "April 27th",
-    sub: "Goodbye For Now",
+    sub: "goodbye for now",
     unlock: { month: 4, day: 27 },
     message: "Good morning, Ash.\n\n" +
 "I hope your flight went well. Although, I’m pretty sure I already know that by now since you’ve definitely texted me—hopefully.\n\n" +
@@ -538,7 +521,7 @@ function buildTiles() {
       <div class="tile-icon">${unlocked ? tile.icon : "🔒"}</div>
       <div class="tile-title">${tile.title}</div>
       <div class="tile-sub">${unlocked ? (tile.sub || "") : "Locked"}</div>
-      ${unlocked ? `<div class="view-badge ${count > 0 ? "seen" : ""}" id="badge-${tile.id}">${viewLabel(count)}</div>` : ""}
+      ${unlocked ? `` : ""}
     `;
     if (unlocked) el.onclick = () => openModal(tile);
     dateGrid.appendChild(el);
@@ -553,7 +536,6 @@ function buildTiles() {
     el.innerHTML = `
       <div class="tile-icon">${tile.icon}</div>
       <div class="tile-title">${tile.title}</div>
-      <div class="view-badge ${count > 0 ? "seen" : ""}" id="badge-${tile.id}">${viewLabel(count)}</div>
     `;
     el.onclick = () => openModal(tile);
     sitGrid.appendChild(el);
