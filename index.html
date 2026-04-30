@@ -11,9 +11,6 @@
 <link rel="apple-touch-icon" href="icon-192.png"/>
 <meta name="theme-color" content="#fce4ec"/>
 <style>
-  /* ============================================================
-     BASE & RESET
-  ============================================================ */
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
@@ -24,9 +21,7 @@
     transition: background 1s ease, color 1s ease;
   }
 
-  /* ============================================================
-     LOGIN SCREEN — neutral/bland
-  ============================================================ */
+  /* LOGIN */
   #login-screen {
     display: flex;
     flex-direction: column;
@@ -56,12 +51,7 @@
     gap: 1rem;
   }
 
-  .login-box label {
-    font-size: 0.8rem;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
+  .login-box label { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 0.08em; }
 
   .login-box input {
     padding: 0.65rem 0.8rem;
@@ -87,16 +77,9 @@
 
   .login-box button:hover { background: #444; }
 
-  #login-error {
-    font-size: 0.8rem;
-    color: #c0392b;
-    display: none;
-    text-align: center;
-  }
+  #login-error { font-size: 0.8rem; color: #c0392b; display: none; text-align: center; }
 
-  /* ============================================================
-     MAIN APP — romantic, unlocked state
-  ============================================================ */
+  /* MAIN APP */
   #app-screen {
     display: none;
     padding: 1.5rem 1rem 4rem;
@@ -104,16 +87,12 @@
     margin: 0 auto;
   }
 
-  /* Romantic background on body when unlocked */
   body.unlocked {
     background: linear-gradient(135deg, #fff0f3 0%, #fce4ec 50%, #fdf3f0 100%);
     color: #3d2030;
   }
 
-  .app-header {
-    text-align: center;
-    padding: 2rem 0 1.5rem;
-  }
+  .app-header { text-align: center; padding: 2rem 0 1.5rem; }
 
   .app-header h1 {
     font-size: 1.9rem;
@@ -122,13 +101,8 @@
     color: #b5475a;
   }
 
-  .app-header p {
-    font-size: 0.85rem;
-    color: #c47a8a;
-    margin-top: 0.4rem;
-  }
+  .app-header p { font-size: 0.85rem; color: #c47a8a; margin-top: 0.4rem; }
 
-  /* Section headings */
   .section-label {
     font-size: 0.75rem;
     text-transform: uppercase;
@@ -139,9 +113,7 @@
     padding-bottom: 0.4rem;
   }
 
-  /* ============================================================
-     TILE GRID
-  ============================================================ */
+  /* TILES */
   .tile-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -152,7 +124,7 @@
     background: #fff;
     border: 1px solid #f2c0cb;
     border-radius: 14px;
-    padding: 1.1rem 0.8rem;
+    padding: 1.1rem 0.8rem 0.8rem;
     text-align: center;
     cursor: pointer;
     transition: transform 0.18s ease, box-shadow 0.18s ease;
@@ -161,8 +133,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     user-select: none;
+    position: relative;
   }
 
   .tile:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(181,71,90,0.12); }
@@ -183,9 +156,8 @@
   .tile-sub { font-size: 0.7rem; color: #c47a8a; }
   .tile.locked .tile-sub { color: #ccc; }
 
-  /* ============================================================
-     MODAL
-  ============================================================ */
+
+  /* MODAL */
   #modal-overlay {
     display: none;
     position: fixed;
@@ -240,11 +212,20 @@
     line-height: 1.7;
     text-align: center;
     font-style: italic;
+    max-height: 45vh;
+    overflow-y: auto;
+    padding-right: 0.3rem;
+    scrollbar-width: thin;
+    scrollbar-color: #f2c0cb transparent;
   }
 
-  /* ============================================================
-     DUAL CLOCK
-  ============================================================ */
+  .modal-body::-webkit-scrollbar { width: 4px; }
+  .modal-body::-webkit-scrollbar-track { background: transparent; }
+  .modal-body::-webkit-scrollbar-thumb { background: #f2c0cb; border-radius: 4px; }
+
+  .modal-views { display: none; }
+
+  /* CLOCK */
   .clock-bar {
     margin-top: 2.5rem;
     background: #fff;
@@ -259,28 +240,11 @@
   }
 
   .clock-item { text-align: center; }
-
-  .clock-label {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #c47a8a;
-    margin-bottom: 0.25rem;
-  }
-
-  .clock-time {
-    font-size: 1.25rem;
-    font-weight: 300;
-    color: #b5475a;
-    letter-spacing: 0.05em;
-  }
-
+  .clock-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: #c47a8a; margin-bottom: 0.25rem; }
+  .clock-time { font-size: 1.25rem; font-weight: 300; color: #b5475a; letter-spacing: 0.05em; }
   .clock-date { font-size: 0.72rem; color: #c47a8a; margin-top: 0.15rem; }
   .clock-divider { width: 1px; height: 40px; background: #f2c0cb; }
 
-  /* ============================================================
-     RESPONSIVE
-  ============================================================ */
   @media (max-width: 400px) {
     .tile-grid { grid-template-columns: repeat(2, 1fr); }
     .clock-divider { display: none; }
@@ -289,9 +253,6 @@
 </head>
 <body>
 
-<!-- ============================================================
-     LOGIN SCREEN
-============================================================ -->
 <div id="login-screen">
   <h1>Notes</h1>
   <div class="login-box">
@@ -302,24 +263,18 @@
   </div>
 </div>
 
-<!-- ============================================================
-     MAIN APP SCREEN
-============================================================ -->
 <div id="app-screen">
   <div class="app-header">
     <h1>for asha ♡</h1>
     <p>open when you need it</p>
   </div>
 
-  <!-- DATE-BASED TILES -->
   <div class="section-label">📅 Special Dates</div>
   <div class="tile-grid" id="date-tiles"></div>
 
-  <!-- SITUATION-BASED TILES -->
   <div class="section-label">💌 Open When…</div>
   <div class="tile-grid" id="situation-tiles"></div>
 
-  <!-- DUAL CLOCK -->
   <div class="clock-bar">
     <div class="clock-item">
       <div class="clock-label">🇵🇭 Philippines</div>
@@ -335,15 +290,13 @@
   </div>
 </div>
 
-<!-- ============================================================
-     MODAL
-============================================================ -->
 <div id="modal-overlay" onclick="closeModal(event)">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModalDirect()">×</button>
     <div class="modal-icon" id="modal-icon"></div>
     <div class="modal-title" id="modal-title"></div>
     <div class="modal-body" id="modal-body"></div>
+    <div class="modal-views" id="modal-views"></div>
   </div>
 </div>
 
@@ -356,20 +309,18 @@
 const PASSWORD = "1234";
 
 // BIRTHDAY DATE — format: month (1-12), day
-const BIRTHDAY = { month: 6, day: 15 }; // e.g. June 15 — replace with Ash's birthday
+const BIRTHDAY = { month: 6, day: 15 };
 
 // ============================================================
 //  DATE-BASED TILES
-//  unlock: { month, day } — unlocks ON that date or after
-//  To add a tile, copy a block and add it to the array.
 // ============================================================
 const dateTiles = [
   {
-    id: "apr27",
+    id: "apr26",
     icon: "🌷",
     title: "April 27th",
-    sub: "a special day",
-    unlock: { month: 4, day: 24 },
+    sub: "goodbye for now",
+    unlock: { month: 4, day: 27 },
     message: "Good morning, Ash.\n\n" +
 "I hope your flight went well. Although, I’m pretty sure I already know that by now since you’ve definitely texted me—hopefully.\n\n" +
 "I’m gonna be honest for a second.\n\n" +
@@ -443,20 +394,11 @@ const dateTiles = [
     sub: "almost there",
     unlock: { month: 8, day: 1 },
     message: "Placeholder message content. Replace this with your August 1st note."
-  },
-  {
-    id: "sep1",
-    icon: "🎉",
-    title: "September 1st",
-    sub: "see you soon!",
-    unlock: { month: 9, day: 1 },
-    message: "Placeholder message content. Replace this with your September 1st note for Ash."
   }
 ];
 
 // ============================================================
-//  SITUATION-BASED TILES — always unlocked
-//  To add more, copy a block and add to the array.
+//  SITUATION-BASED TILES
 // ============================================================
 const situationTiles = [
   {
@@ -473,50 +415,84 @@ const situationTiles = [
   },
   {
     id: "s3",
+    icon: "✨",
+    title: "Halfway through summer",
+    message: "Placeholder message content. Replace with your halfway note."
+  },
+  {
+    id: "s4",
     icon: "😢",
     title: "When you're sad",
     message: "Placeholder message content. Replace with your note for sad days."
   },
   {
-    id: "s4",
+    id: "s5",
     icon: "😤",
     title: "When you're frustrated",
     message: "Placeholder message content. Replace with your note for frustrating days."
   },
   {
-    id: "s5",
+    id: "s6",
     icon: "🎉",
     title: "When something good happens",
     message: "Placeholder message content. Replace with your note for celebrating wins."
   },
   {
-    id: "s6",
+    id: "s7",
     icon: "🌙",
     title: "When you can't sleep",
     message: "Placeholder message content. Replace with your note for restless nights."
   },
   {
-    id: "s7",
+    id: "s8",
     icon: "🫂",
     title: "When you need a hug",
     message: "Placeholder message content. Replace with your note for when Ash needs comfort."
   },
   {
-    id: "s8",
+    id: "s9",
     icon: "💪",
     title: "When you need motivation",
     message: "Placeholder message content. Replace with your hype-up note."
   },
   {
-    id: "s9",
-    icon: "💤",
-    title: "(if) the going gets tough between us",
-    message: "Placeholder message content. Replace with your note for when Ash is exhausted."
+    id: "s10",
+    icon: "🌧️",
+    title: "If things get rough between us",
+    message: "Placeholder message content. Replace with your note for when things feel hard between you two."
   }
 ];
 
 // ============================================================
-//  LOGIN LOGIC
+//  VIEW TRACKING — uses localStorage, persists across sessions
+//  Keys are tile IDs, values are view counts
+// ============================================================
+const STORAGE_KEY = "asha_views";
+
+function getViews() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch { return {}; }
+}
+
+function incrementView(id) {
+  const views = getViews();
+  views[id] = (views[id] || 0) + 1;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(views));
+  return views[id];
+}
+
+function getViewCount(id) {
+  return getViews()[id] || 0;
+}
+
+function viewLabel(count) {
+  if (count === 0) return "not opened yet";
+  if (count === 1) return "opened once";
+  return `opened ${count} times`;
+}
+
+// ============================================================
+//  LOGIN
 // ============================================================
 function attemptLogin() {
   const input = document.getElementById("pw-input").value;
@@ -532,21 +508,19 @@ function attemptLogin() {
   }
 }
 
-// Allow Enter key on password field
 document.getElementById("pw-input").addEventListener("keydown", e => {
   if (e.key === "Enter") attemptLogin();
 });
 
 // ============================================================
-//  DATE UNLOCK LOGIC
+//  DATE UNLOCK
 // ============================================================
 function isUnlocked(unlock) {
   if (!unlock) return true;
   const now = new Date();
-  const month = now.getMonth() + 1;
-  const day = now.getDate();
-  if (month > unlock.month) return true;
-  if (month === unlock.month && day >= unlock.day) return true;
+  const m = now.getMonth() + 1, d = now.getDate();
+  if (m > unlock.month) return true;
+  if (m === unlock.month && d >= unlock.day) return true;
   return false;
 }
 
@@ -557,12 +531,15 @@ function buildTiles() {
   const dateGrid = document.getElementById("date-tiles");
   dateTiles.forEach(tile => {
     const unlocked = isUnlocked(tile.unlock);
+    const count = unlocked ? getViewCount(tile.id) : 0;
     const el = document.createElement("div");
     el.className = "tile" + (unlocked ? "" : " locked");
+    el.id = "tile-" + tile.id;
     el.innerHTML = `
       <div class="tile-icon">${unlocked ? tile.icon : "🔒"}</div>
       <div class="tile-title">${tile.title}</div>
-      ${tile.sub ? `<div class="tile-sub">${unlocked ? tile.sub : "Locked"}</div>` : ""}
+      <div class="tile-sub">${unlocked ? (tile.sub || "") : "Locked"}</div>
+      ${unlocked ? `` : ""}
     `;
     if (unlocked) el.onclick = () => openModal(tile);
     dateGrid.appendChild(el);
@@ -570,8 +547,10 @@ function buildTiles() {
 
   const sitGrid = document.getElementById("situation-tiles");
   situationTiles.forEach(tile => {
+    const count = getViewCount(tile.id);
     const el = document.createElement("div");
     el.className = "tile";
+    el.id = "tile-" + tile.id;
     el.innerHTML = `
       <div class="tile-icon">${tile.icon}</div>
       <div class="tile-title">${tile.title}</div>
@@ -585,6 +564,15 @@ function buildTiles() {
 //  MODAL
 // ============================================================
 function openModal(tile) {
+  const count = incrementView(tile.id);
+
+  // update badge on the tile in the background
+  const badge = document.getElementById("badge-" + tile.id);
+  if (badge) {
+    badge.textContent = viewLabel(count);
+    badge.classList.add("seen");
+  }
+
   document.getElementById("modal-icon").textContent = tile.icon || "";
   document.getElementById("modal-title").textContent = tile.title;
   document.getElementById("modal-body").innerHTML = tile.message.replace(/\n/g, "<br>");
@@ -604,14 +592,14 @@ function closeModalDirect() {
 // ============================================================
 function startClocks() {
   function update() {
-    const fmt = (tz) => {
+    const fmt = tz => {
       const now = new Date();
-      const time = now.toLocaleTimeString("en-US", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit" });
-      const date = now.toLocaleDateString("en-US", { timeZone: tz, weekday: "short", month: "short", day: "numeric" });
-      return { time, date };
+      return {
+        time: now.toLocaleTimeString("en-US", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit" }),
+        date: now.toLocaleDateString("en-US", { timeZone: tz, weekday: "short", month: "short", day: "numeric" })
+      };
     };
-    const ph = fmt("Asia/Manila");
-    const ca = fmt("America/Toronto");
+    const ph = fmt("Asia/Manila"), ca = fmt("America/Toronto");
     document.getElementById("clock-ph").textContent = ph.time;
     document.getElementById("date-ph").textContent = ph.date;
     document.getElementById("clock-ca").textContent = ca.time;
@@ -621,12 +609,10 @@ function startClocks() {
   setInterval(update, 1000);
 }
 </script>
-</body>
 <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js');
-    });
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
   }
 </script>
+</body>
 </html>
