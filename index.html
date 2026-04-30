@@ -353,7 +353,7 @@
 // ============================================================
 
 // CHANGE PASSWORD HERE
-const PASSWORD = "mywinter";
+const PASSWORD = "1234";
 
 // BIRTHDAY DATE — format: month (1-12), day
 const BIRTHDAY = { month: 6, day: 15 }; // e.g. June 15 — replace with Ash's birthday
@@ -393,7 +393,16 @@ const dateTiles = [
     sub: "first of the month",
     unlock: { month: 5, day: 1 },
     // REPLACE MESSAGE BELOW
-    message: "Placeholder message content. Replace this with your May 1st note for Ash."
+    message: "Hi baby!\n\n" +
+"I hope you aren't too jet laggy anymore 😅. The good news is that we've already made it 6 days, I think we got this in the bag!\n\n" +
+"Remember the book you left with me at the airport? You told me to keep it and that you would come and get it when you were back in Kingston. What's funny is that this gift has a bit of the same idea behind it.\n\n" +
+"I don't think I can express just how much I love this ring. I wear it so much I can't remember the last time that it wasn't with me. At this point I think of it as being a part of me 😂.\n\n" +
+"In other words, by giving it to you I am giving you a part of me.\n\n" +
+"But, I really like this ring… No seriously, I REALLYYYY like this ring.\n\n" +
+"So let me rephrase — I am not giving it to you, I am lending it to you. It's mine. When you come back to Canada I will find you and take it back.\n\n" +
+"If you want it again after that tho I guess you could just hold my hand or something 🤷\n\n" +
+"With Love,\n" +
+"Your bitch 🙂"
   },
   {
     id: "jun1",
@@ -401,7 +410,15 @@ const dateTiles = [
     title: "June 1st",
     sub: "one month in",
     unlock: { month: 6, day: 1 },
-    message: "Placeholder message content. Replace this with your June 1st note."
+    message: "Hi darling,\n\n" +
+"Soooo, today's gift is a little different.\n\n" +
+"What's interesting about this one is that you were the person that gave me the idea for it.\n\n" +
+"I've noticed a weird but comforting thing that happens days after you spend the night at my place — I could be working on something random in my room and I'll suddenly catch a small trace of your perfume in the air.\n\n" +
+"Whenever I do, it makes me stop whatever I'm doing and just smile. Almost like a reflex that instantly relaxes me.\n\n" +
+"I'm giving you some of my cologne in hopes that it might do the same thing for you that yours does for me.\n\n" +
+"Don't worry tho, if the bottle runs out you can always just get a refill at my place ♥️\n\n" +
+"Love,\n" +
+"Your very happy canadian punching bag"
   },
   {
     id: "birthday",
@@ -446,8 +463,8 @@ const situationTiles = [
     id: "s1",
     icon: "🌊",
     title: "When distance feels huge",
-    message: "Placeholder message content. Replace with your note for when distance feels hard."
-  },
+    message: "Hey beautiful,<br><br>I know we are 13,250 km apart right now.<br><br>But I'm still only one call away.<br><br>If the distance is feeling huge for you, I promise it's feeling twice as big for me too.<br><br>When I'm with you, stress decides to take a day off. When you run your hands through my hair I completely forget what I'm doing (including when I'm driving 😅).<br><br>I'm saying this in hopes that you find comfort in knowing — you aren't the only one feeling the distance.<br><br>I'm writing this at the 6 day mark, and I've already come up with a trick that helps me feel just a little bit closer to you.<br><br>I imagine the day I pick you up from the airport. I close my eyes and picture myself waiting just outside the arrival doors. You walk through, and through the crowd we lock eyes, and my face reacts on its own.<br><br>I try to picture the feeling of the first hug and kiss we would share.<br><br>Realistically, there's a pretty good chance I've come up with some other ways to feel close to you by now.<br><br>If you want more of them, I think you should call me 😁<br><br>Love,<br>Your geographically inconvenient crushy" 
+ },
   {
     id: "s2",
     icon: "💭",
@@ -570,7 +587,7 @@ function buildTiles() {
 function openModal(tile) {
   document.getElementById("modal-icon").textContent = tile.icon || "";
   document.getElementById("modal-title").textContent = tile.title;
-  document.getElementById("modal-body").textContent = tile.message;
+  document.getElementById("modal-body").innerHTML = tile.message.replace(/\n/g, "<br>");
   document.getElementById("modal-overlay").classList.add("open");
 }
 
